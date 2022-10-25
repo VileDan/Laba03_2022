@@ -3,4 +3,4 @@
 Мною была проведена работа по зашифровке алгоритмом ADFGVX
 Дешифровка пока не реализована
 Ссылка на exe с остальным архивом
-https://disk.yandex.ru/d/xe9nf_Epjr0ZUA
+https://drive.google.com/drive/folders/1Xp5GUZ35CApNu-NCnnXSCB0GqGw7LKFp?usp=sharing

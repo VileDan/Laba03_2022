@@ -14,7 +14,7 @@ cipherForm = CipherForm()
 cipherForm.setupUi(cipherWindow)
 
 autorizationWindow.show()
-#cipherWindow.show()
+# cipherWindow.show()
 
 # Загрузка списка пользователей
 usersList = {}
@@ -36,9 +36,12 @@ cipherAlphabet = ['A', 'D', 'F', 'G', 'V', 'X']
 inputLogin = ""
 inputPassword = ""
 
+
 def formOpen():
     cipherWindow.show()
     autorizationWindow.close()
+
+
 def signUp():
     if len(autorizationForm.loginBox.text()) > 0 and len(autorizationForm.passwordBox.text()) > 0:
         inputLogin = autorizationForm.loginBox.text()
@@ -62,6 +65,7 @@ def signIn():
         elif isUserExist and inputPassword == neededPassword:
             autorizationForm.status_label.setText("Успешный вход")
             formOpen()
+            cipherForm.hello_label.setText("Здравствуйте, {0}! Что будете шифровать сегодня?".format(inputLogin))
     else:
         autorizationForm.status_label.setText("Пустые поля")
 
@@ -86,13 +90,14 @@ def userCreate(iL, iP):
             autorizationForm.status_label.setText("Регистрация успешна")
             print("Регистрация успешна!")
             formOpen()
+            cipherForm.hello_label.setText("Здравствуйте, {0}! Что будете шифровать сегодня?".format(iL))
 
 
 autorizationForm.signUpButton.clicked.connect(signUp)
 autorizationForm.signInButton.clicked.connect(signIn)
 
-# Сам шифратор
 
+# Сам шифратор
 
 
 def normalTextInput():
@@ -108,13 +113,14 @@ def normalTextInput():
 
 
 def cipherMessage(txt):
+    cipherWord = cipherForm.cipherWordBox.text()
     cipherKey = cipherForm.cipherKeyBox.text()
     polibiusSquare = [[]]
     firstStepCipher = ""
     finalStepCipher = ""
     coloumn = [[]]
     print("Начинается шифрование")
-    polibiusSquare = polibiusSquareForm()
+    polibiusSquare = polibiusSquareForm(cipherWord)
     for letter in txt:
         indices = [(i, x.index(letter)) for i, x in enumerate(polibiusSquare) if letter in x]
         firstStepCipher += cipherAlphabet[indices[0][0]] + cipherAlphabet[indices[0][1]]
@@ -122,6 +128,10 @@ def cipherMessage(txt):
     coloumn = coloumnForm(firstStepCipher)
     finalStepCipher = coloumnShuffle(coloumn, cipherKey)
     cipherForm.cipherTextBox.setPlainText(finalStepCipher)
+    #Запись в файл
+    outputFile = "{0}\nКлюч колонок: {1}\nКлючевое слово: {2}".format(finalStepCipher, cipherKey, cipherWord)
+    with open("cipherMessage.txt", "w") as file:
+        file.write(outputFile)
 
 
 def coloumnShuffle(clm, key):
@@ -149,9 +159,9 @@ def coloumnForm(cipher):
         print(coloumns[x])
     return coloumns
 
-def polibiusSquareForm():
+
+def polibiusSquareForm(word):
     polibiusSquare = [[]]
-    cipherWord = cipherForm.cipherWordBox.text()
     isWordIsOver = False
     counterOfWordLetters = 0
     counterWithoutRepeat = 0
@@ -160,11 +170,11 @@ def polibiusSquareForm():
         polibiusSquare.append([])
         for y in range(6):
             # Разбираем сначала слово по буквам и если буква уже была не добавляем
-            for I in range(len(cipherWord)):
-                if cipherWord[I] not in letterWhatWas:
+            for I in range(len(word)):
+                if word[I] not in letterWhatWas:
                     # print(cipherWord[counterForWord])
-                    polibiusSquare[x].append(cipherWord[I])
-                    letterWhatWas.append(cipherWord[I])
+                    polibiusSquare[x].append(word[I])
+                    letterWhatWas.append(word[I])
                     counterOfWordLetters += 1
                     break
             else:
